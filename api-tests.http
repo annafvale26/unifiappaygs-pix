@@ -1,0 +1,50 @@
+### Teste 1: PIX Aprovado
+POST http://127.0.0.1:3000/pix
+Content-Type: application/json
+
+{
+  "id_transacao": "TXN001",
+  "valor": 150.50
+}
+
+###
+
+### Teste 2: PIX Rejeitado (acima da reserva)
+POST http://127.0.0.1:3000/pix
+Content-Type: application/json
+
+{
+  "id_transacao": "TXN002",
+  "valor": 2000000.00
+}
+
+###
+
+### Teste 3: Validação - Sem campos obrigatórios
+POST http://127.0.0.1:3000/pix
+Content-Type: application/json
+
+{
+  "valor": 100.00
+}
+
+###
+
+### Teste 4: Múltiplas transações
+POST http://127.0.0.1:3000/pix
+Content-Type: application/json
+
+{
+  "id_transacao": "TXN101",
+  "valor": 250.75
+}
+
+###
+
+POST http://127.0.0.1:3000/pix
+Content-Type: application/json
+
+{
+  "id_transacao": "TXN102",
+  "valor": 500.00
+}
