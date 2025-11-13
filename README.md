@@ -663,6 +663,8 @@ Para facilitar o gerenciamento e visualização dos recursos do cluster, foi imp
 
 ![Visão Geral](assets/image28.png)
 
+![Visão Geral](assets/image29.png)
+
 
 ### ✅ Vantagens do Kubernetes Dashboard:
 
