@@ -633,9 +633,69 @@ kill -9 $(lsof -t -i:3000)
 - **Framework:** Express.js 4.18
 - **Containerização:** Docker (multi-stage builds)
 - **Orquestração:** Kubernetes (KIND local cluster)
+- **Gerenciamento Visual:** Kubernetes Dashboard
 - **Registro:** Docker Hub
 - **Armazenamento:** PersistentVolume (hostPath)
 - **Segurança:** Non-root containers, resource limits, secrets
+
+---
+
+### 🔄 Rancher vs Kubernetes Dashboard
+
+Inicialmente, planejou-se utilizar o **Rancher** como ferramenta de gerenciamento visual do cluster. Porém, devido a **incompatibilidade de versão** (Rancher requer Kubernetes < 1.34.0 e o cluster está na v1.34.1), optou-se pelo **Kubernetes Dashboard oficial**.
+
+![Visão Geral](assets/image30.png)
+
+![Visão Geral](assets/image31.png)
+
+
+## 🖥️ Interface Visual - Kubernetes Dashboard
+
+Para facilitar o gerenciamento e visualização dos recursos do cluster, foi implementado o **Kubernetes Dashboard**.
+
+![Visão Geral](assets/image24.png)
+
+![Visão Geral](assets/image25.png)
+
+![Visão Geral](assets/image26.png)
+
+![Visão Geral](assets/image27.png)
+
+![Visão Geral](assets/image28.png)
+
+
+### ✅ Vantagens do Kubernetes Dashboard:
+
+- ✅ **Compatível** com todas as versões do Kubernetes
+- ✅ **Oficial** e mantido pela comunidade Kubernetes
+- ✅ **Leve** e rápido
+- ✅ **Interface completa** para gerenciar pods, deployments, services
+- ✅ **Visualização em tempo real** de logs e métricas
+- ✅ **Escalabilidade visual** - escalar réplicas com um clique
+
+### 🚀 Como acessar o Dashboard neste projeto:
+
+```bash
+# 1. Iniciar o proxy
+kubectl proxy --port=8085
+
+# 2. Gerar token de acesso
+kubectl -n kubernetes-dashboard create token admin-user --duration=24h
+
+# 3. Acessar no navegador
+# http://localhost:8085/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+# 4. Login com o token gerado
+```
+
+### 📊 Recursos gerenciados via Dashboard:
+
+- 🟢 **4 réplicas da API** - Escalabilidade horizontal demonstrada
+- 📦 **Deployments e Services** - Gerenciamento visual
+- 💾 **PersistentVolumes** - Monitoramento de armazenamento
+- 📝 **Logs centralizados** - Visualização de todos os pods
+- ⚙️ **ConfigMaps e Secrets** - Gerenciamento de configurações
+- 🔄 **CronJobs** - Monitoramento de jobs agendados
 
 ---
 
