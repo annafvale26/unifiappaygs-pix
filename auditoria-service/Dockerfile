@@ -14,10 +14,7 @@ COPY src/ ./src/
 FROM node:20-alpine
 WORKDIR /app
 
-# ---- CORREÇÃO AQUI ----
-# Agora copiamos a pasta inteira do 'builder'
-# Se 'node_modules' não existir, ele não dá erro,
-# apenas não será copiado, junto com o resto.
+
 COPY --from=builder /app ./
 
 # --- Segurança ---

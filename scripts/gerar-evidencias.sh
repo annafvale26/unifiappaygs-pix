@@ -17,13 +17,6 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Verificar se o namespace existe
-if ! kubectl get namespace unifiapay &> /dev/null; then
-    echo -e "${YELLOW}[AVISO]${NC} Namespace 'unifiapay' não encontrado!"
-    echo "Execute primeiro: ./scripts/deploy.sh"
-    exit 1
-fi
-
 echo -e "${BLUE}===== Evidência 3.1 - Docker Hub =====${NC}"
 echo ""
 echo "Imagens Docker locais:"
