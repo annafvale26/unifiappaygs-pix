@@ -321,6 +321,23 @@ kubectl get secret api-secrets -n unifiapay -o yaml
 ![Deployment - 2 Réplicas](assets/image05.png)
 *API de Pagamentos rodando com 2/2 réplicas (alta disponibilidade)*
 
+**2.1. Escalabilidade - 4 réplicas:**
+
+```bash
+# Escalar deployment para 4 réplicas
+kubectl scale deployment api-pagamentos -n unifiapay --replicas=4
+
+# Verificar escalabilidade
+kubectl get pods -n unifiapay -l app=api-pagamentos
+```
+![Deployment - 2 Réplicas](assets/image22.png)
+
+![Deployment - 4 Réplicas](assets/image23.png)
+
+
+*Sistema demonstrando escalabilidade horizontal: de 2 para 4 réplicas dinamicamente*  
+*4 pods rodando simultaneamente compartilhando o mesmo PersistentVolume*
+
 **3. CronJob agendado para 6h:**
 
 ![CronJob - Auditoria](assets/image06.png)

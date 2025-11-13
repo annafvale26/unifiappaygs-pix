@@ -6,7 +6,7 @@ metadata:
   labels:
     app: api-pagamentos
 spec:
-  replicas: 2 # (Evidência 3.3 - 2 réplicas)
+  replicas: 2 # Escalabilidade: 2 réplicas para alta disponibilidade
   selector:
     matchLabels:
       app: api-pagamentos
