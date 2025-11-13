@@ -1,19 +1,30 @@
-# UniFIAP Pay - Sistema de Pagamento PIX (SPB)
+# 🏦 UniFIAP Pay - Sistema de Pagamento PIX (SPB)
 
-**RM: RM554379**  
-**Aluno: Anna Vale**  
-**Docker Hub: annafvale**
+> **Simulação do Sistema de Pagamentos Brasileiro com Kubernetes e Docker**
+
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-annafvale-blue?logo=docker)](https://hub.docker.com/u/annafvale)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-KIND-326CE5?logo=kubernetes)](https://kind.sigs.k8s.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js)](https://nodejs.org/)
+
+**RM:** RM554379  
+**Aluno:** Anna Vale  
+**Repositório:** [github.com/annafvale26/unifiappaygs-pix](https://github.com/annafvale26/unifiappaygs-pix)  
+**Docker Hub:** [hub.docker.com/u/annafvale](https://hub.docker.com/u/annafvale)
+
+---
 
 ## 📋 Sobre o Projeto
 
-Este projeto implementa uma simulação simplificada do Sistema de Pagamentos Brasileiro (SPB) com foco em transações PIX, desenvolvido como parte do desafio da disciplina de Global Solutions da FIAP.
+Sistema de pagamento PIX desenvolvido para o desafio Global Solutions da FIAP, implementando uma arquitetura de microsserviços que simula o fluxo completo de transações do Sistema de Pagamentos Brasileiro (SPB).
 
-### 🎯 Objetivo
+### 🎯 Funcionalidades
 
-Simular o fluxo de pagamento PIX utilizando uma arquitetura de microsserviços com:
-- **API de Pagamentos** (Banco Originador - UniFIAP Pay)
-- **Serviço de Auditoria/Liquidação** (Sistema BACEN/STR)
-- **Livro-Razão compartilhado** (Persistent Volume)
+✅ **API de Pagamentos** - Validação e registro de transações PIX  
+✅ **Sistema de Auditoria** - Liquidação automática via CronJob (6h)  
+✅ **Livro-Razão Compartilhado** - PersistentVolume entre serviços  
+✅ **Alta Disponibilidade** - 2 réplicas da API com load balancing  
+✅ **Segurança** - Containers non-root, limites de recursos, secrets  
+✅ **Deploy Automatizado** - Scripts de build, push e deploy
 
 ## 🏗️ Arquitetura
 
@@ -49,32 +60,29 @@ Simular o fluxo de pagamento PIX utilizando uma arquitetura de microsserviços c
 
 ```
 unifiappaygs-pix/
-├── api-pagamentos/           # Microsserviço API de Pagamentos
-│   ├── src/
-│   │   └── index.js         # Lógica da API
-│   ├── Dockerfile           # Multi-stage build
-│   ├── package.json
-│   └── package-lock.json
-├── auditoria-service/        # Microsserviço de Auditoria
-│   ├── src/
-│   │   └── index.js         # Lógica de liquidação
-│   ├── Dockerfile           # Multi-stage build
-│   ├── package.json
-│   └── package-lock.json
-├── k8s/                      # Manifests Kubernetes
+├── api-pagamentos/              # 🔵 Microsserviço API de Pagamentos
+│   ├── src/index.js            #    Lógica de validação e registro PIX
+│   ├── Dockerfile              #    Multi-stage build otimizado
+│   └── package.json
+├── auditoria-service/           # 🟢 Microsserviço de Auditoria/Liquidação
+│   ├── src/index.js            #    Processamento batch de liquidação
+│   ├── Dockerfile              #    Multi-stage build otimizado
+│   └── package.json
+├── k8s/                         # ⚙️ Manifests Kubernetes
 │   ├── 01-namespace-config-secret.yaml
 │   ├── 02-pvc.yaml
 │   ├── 03-api-deployment.yaml
+│   ├── 03b-api-service.yaml
 │   └── 04-auditoria-cronjob.yaml
-├── docker/                   # Configurações Docker
-│   ├── .env
-│   └── pix.key
-├── assets/                   # Evidências e screenshots
-├── scripts/                  # Scripts de automação
-│   ├── build.sh
-│   ├── push.sh
-│   └── deploy.sh
-└── README.md
+├── scripts/                     # 🚀 Automação
+│   ├── build.sh                #    Build das imagens Docker
+│   ├── push.sh                 #    Push para Docker Hub
+│   ├── deploy.sh               #    Deploy no Kubernetes
+│   ├── setup-completo.sh       #    Setup completo do projeto
+│   ├── gerar-evidencias.sh     #    Gerar outputs para evidências
+│   └── verificar-status.sh     #    Status dos recursos
+├── assets/                      # 📸 Evidências (20+ screenshots)
+└── README.md                    # 📖 Este arquivo
 ```
 
 ## 🚀 Pré-requisitos
@@ -260,57 +268,207 @@ kubectl exec -it -n unifiapay <pod-api> -- cat /var/logs/api/instrucoes.log
    - Chave PIX armazenada como Secret
    - ConfigMap para configurações não-sensíveis
 
+---
+
 ## 📊 Evidências do Desafio
 
-### Evidência 3.1 - Imagens no Docker Hub
+### 📦 Evidência 3.1 - Imagens Docker Hub
 
+**Imagens publicadas com tag RM554379:**
+
+![Docker Hub - Imagens Publicadas](assets/image01.png)
+*Docker Hub com as duas imagens: api-pagamentos-spb e auditoria-service-spb*
+
+![Docker Images Local](assets/image02.png)
+*Verificação local das imagens Docker construídas*
+
+**Links Docker Hub:**
+- 🔵 [annafvale/api-pagamentos-spb:v1.RM554379](https://hub.docker.com/r/annafvale/api-pagamentos-spb)
+- 🟢 [annafvale/auditoria-service-spb:v1.RM554379](https://hub.docker.com/r/annafvale/auditoria-service-spb)
+
+**Comando para pull:**
 ```bash
-# Verificar imagens publicadas
-docker search annafvale
-
-# Pull das imagens
 docker pull annafvale/api-pagamentos-spb:v1.RM554379
 docker pull annafvale/auditoria-service-spb:v1.RM554379
 ```
 
-**Links Docker Hub:**
-- [annafvale/api-pagamentos-spb](https://hub.docker.com/r/annafvale/api-pagamentos-spb)
-- [annafvale/auditoria-service-spb](https://hub.docker.com/r/annafvale/auditoria-service-spb)
+---
 
-### Evidência 3.2 - ConfigMap e Secret
+### ⚙️ Evidência 3.2 - ConfigMap e Secret
 
+**ConfigMap com reserva bancária e Secret com chave PIX:**
+
+![ConfigMap e Secret](assets/image03.png)
+*ConfigMap `api-config` com `RESERVA_BANCARIA_SALDO=1000000.00` e Secret `api-secrets` com chave PIX*
+
+**Comando para verificar:**
 ```bash
-# Visualizar ConfigMap
 kubectl describe configmap api-config -n unifiapay
-
-# Visualizar Secret (base64 encoded)
 kubectl get secret api-secrets -n unifiapay -o yaml
 ```
 
-### Evidência 3.3 - PersistentVolume e Replicação
+---
 
+### 💾 Evidência 3.3 - PersistentVolume e Replicação
+
+**1. PersistentVolumeClaim compartilhado:**
+
+![PVC - Livro Razão](assets/image04.png)
+*PVC `livro-razao-pvc` (1Gi) compartilhado entre API e Auditoria*
+
+**2. Deployment com 2 réplicas:**
+
+![Deployment - 2 Réplicas](assets/image05.png)
+*API de Pagamentos rodando com 2/2 réplicas (alta disponibilidade)*
+
+**3. CronJob agendado para 6h:**
+
+![CronJob - Auditoria](assets/image06.png)
+*CronJob de Auditoria agendado para executar a cada 6 horas (0 */6 * * *)*
+
+**4. Recursos no namespace unifiapay:**
+
+![Recursos Kubernetes](assets/image07.png)
+*Visão geral de todos os recursos (pods, services, deployments, cronjobs)*
+
+**5. Livro-Razão ANTES da liquidação:**
+
+![Livro-Razão - Antes](assets/image08.png)
+*Transações com status `AGUARDANDO_LIQUIDACAO`*
+
+**6. Execução manual da Auditoria:**
+
+![Job Manual - Auditoria](assets/image09.png)
+*Criação de Job manual a partir do CronJob para teste*
+
+**7. Livro-Razão DEPOIS da liquidação:**
+
+![Livro-Razão - Depois](assets/image11.png)
+*Transações com status atualizado para `LIQUIDADO`*
+
+**Comandos:**
 ```bash
-# Verificar PVC
+# Ver PVC
 kubectl get pvc -n unifiapay
 
-# Verificar réplicas da API
+# Ver réplicas
 kubectl get deployment api-pagamentos -n unifiapay
-# Deve mostrar: READY 2/2
 
-# Verificar CronJob
+# Ver CronJob
 kubectl get cronjob -n unifiapay
-# Schedule: 0 */6 * * * (a cada 6 horas)
+
+# Forçar execução manual
+kubectl create job -n unifiapay auditoria-manual --from=cronjob/auditoria-service
 ```
 
-### Evidência 3.4 - Segurança
+---
 
+### 🔒 Evidência 3.4 - Requisitos de Segurança
+
+**1. SecurityContext - Usuário não-root:**
+
+![SecurityContext](assets/image12.png)
+*Containers executando com `runAsNonRoot: true` e usuário `appuser` (UID 1000)*
+
+**2. Limites de recursos definidos:**
+
+![Resource Limits](assets/image13.png)
+*CPU: 100m-200m | Memory: 128Mi-256Mi por container*
+
+**3. Multi-stage build otimizado:**
+
+![Docker Build](assets/image14.png)
+*Build multi-stage reduzindo tamanho das imagens*
+
+**4. Imagens otimizadas:**
+
+![Tamanho das Imagens](assets/image15.png)
+*Imagens Alpine (~200MB) vs imagens tradicionais (~1GB)*
+
+**Comandos de verificação:**
 ```bash
-# Verificar configuração de segurança do pod
-kubectl get pod -n unifiapay -l app=api-pagamentos -o yaml | grep -A 5 securityContext
+# SecurityContext
+kubectl get pod -n unifiapay -l app=api-pagamentos -o yaml | grep -A 10 securityContext
 
-# Verificar recursos alocados
-kubectl describe deployment api-pagamentos -n unifiapay | grep -A 10 Limits
+# Resource Limits
+kubectl describe deployment api-pagamentos -n unifiapay | grep -A 10 "Limits:"
+
+# Tamanho das imagens
+docker images | grep annafvale
 ```
+
+---
+
+## 🧪 Evidências de Funcionamento
+
+### ✅ Teste 1: PIX Aprovado (Valor dentro da reserva)
+
+![PIX Aprovado](assets/image16.png)
+
+**Comando:**
+```bash
+curl -X POST http://localhost:3000/pix \
+  -H "Content-Type: application/json" \
+  -d '{"id_transacao": "TXN001", "valor": 150.50}'
+```
+
+**Resposta:**
+```json
+{"status":"PIX Aceito","transacao":"TXN001","estado":"AGUARDANDO_LIQUIDACAO"}
+```
+
+---
+
+### ❌ Teste 2: PIX Rejeitado (Valor acima da reserva)
+
+![PIX Rejeitado](assets/image17.png)
+
+**Comando:**
+```bash
+curl -X POST http://localhost:3000/pix \
+  -H "Content-Type: application/json" \
+  -d '{"id_transacao": "TXN002", "valor": 2000000.00}'
+```
+
+**Resposta:**
+```json
+{"status":"PIX Rejeitado","motivo":"Fundos insuficientes na Reserva Bancária."}
+```
+
+---
+
+### 📋 Teste 3: Logs da API
+
+![Logs da API](assets/image18.png)
+
+**Comando:**
+```bash
+kubectl logs -n unifiapay -l app=api-pagamentos --tail=20
+```
+
+Mostra requisições recebidas, validações e gravações no livro-razão.
+
+---
+
+### 🔄 Teste 4: Execução da Auditoria/Liquidação
+
+![Logs da Auditoria](assets/image19.png)
+
+**Comando:**
+```bash
+kubectl create job -n unifiapay auditoria-manual --from=cronjob/auditoria-service
+kubectl logs -n unifiapay job/auditoria-manual
+```
+
+Mostra processamento de transações e atualização de status para `LIQUIDADO`.
+
+---
+
+### 🎯 Visão Geral do Sistema
+
+![Visão Geral](assets/image20.png)
+
+*Todos os recursos do sistema funcionando em harmonia no cluster Kubernetes*
 
 ## 🛠️ Comandos Úteis
 
@@ -373,18 +531,133 @@ kubectl get pods -n unifiapay
 lsof -i :3000
 ```
 
-## 📚 Referências
+---
 
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
-- [KIND Documentation](https://kind.sigs.k8s.io/)
-- [Docker Documentation](https://docs.docker.com/)
-- [Node.js Express](https://expressjs.com/)
-- [Sistema de Pagamentos Brasileiro (SPB)](https://www.bcb.gov.br/estabilidadefinanceira/spb)
+## 🛠️ Scripts de Automação
 
-## 📝 Licença
+O projeto inclui scripts para facilitar o desenvolvimento e deploy:
 
-Este projeto foi desenvolvido para fins educacionais como parte do desafio Global Solutions da FIAP.
+| Script | Descrição |
+|--------|-----------|
+| `build.sh` | Build das imagens Docker |
+| `push.sh` | Push para Docker Hub (requer login) |
+| `deploy.sh` | Deploy no Kubernetes |
+| `setup-completo.sh` | Setup completo (build + push + deploy) |
+| `gerar-evidencias.sh` | Gerar outputs para capturas de tela |
+| `verificar-status.sh` | Verificar status dos recursos |
+| `cleanup.sh` | Limpar recursos do cluster |
+
+**Uso:**
+```bash
+chmod +x scripts/*.sh
+./scripts/setup-completo.sh  # Setup completo automático
+```
 
 ---
 
-**Desenvolvido por Anna Vale (RM554379) - FIAP 2025**
+## 🐛 Troubleshooting
+
+<details>
+<summary><strong>🔴 Pods não iniciam</strong></summary>
+
+```bash
+# Verificar eventos do pod
+kubectl describe pod -n unifiapay <pod-name>
+
+# Verificar logs de erro
+kubectl logs -n unifiapay <pod-name>
+```
+</details>
+
+<details>
+<summary><strong>🔴 Imagens não encontradas</strong></summary>
+
+```bash
+# Verificar se fez push
+docker images | grep annafvale
+
+# Fazer push novamente
+./scripts/push.sh
+```
+</details>
+
+<details>
+<summary><strong>🔴 PVC em Pending</strong></summary>
+
+```bash
+# Verificar StorageClass (KIND tem padrão)
+kubectl get storageclass
+
+# Ver detalhes do PVC
+kubectl describe pvc livro-razao-pvc -n unifiapay
+```
+</details>
+
+<details>
+<summary><strong>🔴 Port Forward não funciona</strong></summary>
+
+```bash
+# Verificar se pods estão rodando
+kubectl get pods -n unifiapay
+
+# Verificar se porta 3000 está livre
+lsof -i :3000
+
+# Matar processo usando a porta
+kill -9 $(lsof -t -i:3000)
+```
+</details>
+
+---
+
+## 📚 Tecnologias Utilizadas
+
+- **Runtime:** Node.js 20 (Alpine Linux)
+- **Framework:** Express.js 4.18
+- **Containerização:** Docker (multi-stage builds)
+- **Orquestração:** Kubernetes (KIND local cluster)
+- **Registro:** Docker Hub
+- **Armazenamento:** PersistentVolume (hostPath)
+- **Segurança:** Non-root containers, resource limits, secrets
+
+---
+
+## 📖 Referências
+
+- 📘 [Kubernetes Documentation](https://kubernetes.io/docs/)
+- 📘 [KIND - Kubernetes IN Docker](https://kind.sigs.k8s.io/)
+- 📘 [Docker Documentation](https://docs.docker.com/)
+- 📘 [Node.js Express Framework](https://expressjs.com/)
+- 📘 [Sistema de Pagamentos Brasileiro (SPB)](https://www.bcb.gov.br/estabilidadefinanceira/spb)
+- 📘 [PIX - Banco Central do Brasil](https://www.bcb.gov.br/estabilidadefinanceira/pix)
+
+---
+
+## 🎓 Sobre o Desafio
+
+Este projeto foi desenvolvido como parte do desafio **Global Solutions 2025** da **FIAP**, demonstrando conhecimentos em:
+
+✅ Containerização com Docker  
+✅ Orquestração com Kubernetes  
+✅ Arquitetura de Microsserviços  
+✅ CI/CD e DevOps  
+✅ Segurança em Containers  
+✅ Sistemas de Pagamento (SPB/PIX)  
+
+---
+
+## 📝 Licença
+
+Este projeto foi desenvolvido para fins **educacionais** como parte do desafio Global Solutions da FIAP.
+
+---
+
+<div align="center">
+
+**Desenvolvido por Anna Vale (RM554379)**  
+**FIAP - Global Solutions 2025**
+
+[![GitHub](https://img.shields.io/badge/GitHub-annafvale26-181717?logo=github)](https://github.com/annafvale26/unifiappaygs-pix)
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-annafvale-2496ED?logo=docker)](https://hub.docker.com/u/annafvale)
+
+</div>
