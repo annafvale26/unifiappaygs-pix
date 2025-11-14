@@ -416,6 +416,81 @@ docker images | grep annafvale
 
 ---
 
+### 🌐 Evidência 3.5 - Redes Docker
+
+**Redes Docker utilizadas no projeto:**
+
+O projeto utiliza redes Docker para isolamento e comunicação dos containers do cluster Kubernetes KIND.
+
+**1. Listar redes Docker:**
+
+```bash
+docker network ls
+```
+
+**Saída esperada:**
+```
+NETWORK ID     NAME             DRIVER    SCOPE
+08e4500a295c   kind             bridge    local
+```
+
+**2. Inspecionar rede KIND (cluster principal):**
+
+```bash
+docker network inspect kind
+```
+
+**3. Visualizar IPs dos containers:**
+
+```bash
+docker network inspect kind --format='{{range .Containers}}{{.Name}}: {{.IPv4Address}}{{"\n"}}{{end}}'
+```
+
+![Tamanho das Imagens](assets/image32.png)
+
+**Resultado:**
+```
+unifiapay-cluster-control-plane: 172.19.0.2/16
+```
+
+**4. IPs dos Pods Kubernetes:**
+
+```bash
+kubectl get pods -n unifiapay -o wide
+```
+
+**Arquitetura de Rede:**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Docker Network: kind (172.19.0.0/16)                   │
+│                                                         │
+│  ┌────────────────────────────────────────────────────┐ │
+│  │  Cluster Kubernetes: unifiapay-cluster             │ │
+│  │  IP: 172.19.0.2                                    │ │
+│  │                                                    │ │
+│  │  ┌──────────────────────────────────────────────┐  │ │
+│  │  │  Kubernetes Network (10.244.0.0/16)          │  │ │
+│  │  │                                              │  │ │
+│  │  │  - api-pagamentos (Pod 1): 10.244.0.7        │  │ │
+│  │  │  - api-pagamentos (Pod 2): 10.244.0.8        │  │ │
+│  │  │  - api-pagamentos (Pod 3): 10.244.0.9        │  │ │
+│  │  │  - api-pagamentos (Pod 4): 10.244.0.10       │  │ │
+│  │  │  - auditoria-service: 10.244.0.11-13         │  │ │
+│  │  └──────────────────────────────────────────────┘  │ │
+│  └────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Características da rede:**
+- ✅ **Isolamento:** Pods isolados em rede overlay do Kubernetes
+- ✅ **Comunicação:** Service ClusterIP para comunicação interna
+- ✅ **Exposição:** Port-forward para acesso externo (localhost:3000)
+- ✅ **Subnet Docker:** 172.19.0.0/16 (rede bridge)
+- ✅ **Subnet Kubernetes:** 10.244.0.0/16 (rede overlay CNI)
+
+---
+
 ## 🧪 Evidências de Funcionamento
 
 ### ✅ Teste 1: PIX Aprovado (Valor dentro da reserva)
